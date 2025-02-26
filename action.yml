@@ -52,3 +52,27 @@ inputs:
 runs:
   using: 'node20'
   main: 'dist/index.js'
+
+outputs:
+  result:
+    description: 'The result of the test run (succeeded or failed)'
+  resultsUrl:
+    description: 'URL to view the test results in Datadog'
+  criticalErrors:
+    description: 'Number of critical errors encountered'
+  passed:
+    description: 'Number of tests that passed'
+  failedNonBlocking:
+    description: 'Number of non-blocking tests that failed'
+  failed:
+    description: 'Number of tests that failed'
+  skipped:
+    description: 'Number of tests that were skipped'
+  notFound:
+    description: 'Number of tests that were not found'
+  timedOut:
+    description: 'Number of tests that timed out'
+  report:
+    description: 'A formatted string containing the test summary'
+  testRuns:
+    description: 'JSON string containing detailed information about each test run'

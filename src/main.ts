@@ -25,6 +25,31 @@ const run = async (): Promise<void> => {
     synthetics.utils.reportExitLogs(reporter, config, {results})
 
     const exitReason = synthetics.utils.getExitReason(config, {results})
+    const baseUrl = synthetics.utils.getAppBaseURL(config)
+    const batchUrl = synthetics.utils.getBatchUrl(baseUrl, summary.batchId)
+    
+    // Set outputs that can be consumed by other workflow steps
+    core.setOutput('result', exitReason === 'passed' ? 'succeeded' : 'failed')
+    core.setOutput('resultsUrl', batchUrl)
+    core.setOutput('criticalErrors', summary.criticalErrors)
+    core.setOutput('passed', summary.passed)
+    core.setOutput('failedNonBlocking', summary.failedNonBlocking)
+    core.setOutput('failed', summary.failed)
+    core.setOutput('skipped', summary.skipped)
+    core.setOutput('notFound', summary.testsNotFound.size)
+    core.setOutput('timedOut', summary.timedOut)
+    
+    // Create a full report string
+    const reportString = printSummary(summary, config)
+    core.setOutput('report', reportString)
+    
+    // Output test results as JSON string
+    try {
+      core.setOutput('testRuns', JSON.stringify(results))
+    } catch (jsonError) {
+      core.warning('Could not stringify test results for output')
+    }
+
     if (exitReason !== 'passed') {
       core.setFailed(`Datadog Synthetics tests failed: ${printSummary(summary, config)}`)
     } else {
@@ -34,6 +59,20 @@ const run = async (): Promise<void> => {
     synthetics.utils.reportExitLogs(reporter, config, {error})
 
     const exitReason = synthetics.utils.getExitReason(config, {error})
+    
+    // Set outputs even in error case with default values
+    core.setOutput('result', exitReason === 'passed' ? 'succeeded' : 'failed')
+    core.setOutput('resultsUrl', '')
+    core.setOutput('criticalErrors', 0)
+    core.setOutput('passed', 0)
+    core.setOutput('failedNonBlocking', 0)
+    core.setOutput('failed', 0)
+    core.setOutput('skipped', 0)
+    core.setOutput('notFound', 0)
+    core.setOutput('timedOut', 0)
+    core.setOutput('report', 'Error executing tests')
+    core.setOutput('testRuns', '[]')
+
     if (exitReason !== 'passed') {
       core.setFailed('Running Datadog Synthetics tests failed.')
     }
