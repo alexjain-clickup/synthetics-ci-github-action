@@ -74,5 +74,3 @@ outputs:
     description: 'Number of tests that timed out'
   report:
     description: 'A formatted string containing the test summary'
-  testRuns:
-    description: 'JSON string containing detailed information about each test run'

@@ -43,13 +43,6 @@ const run = async (): Promise<void> => {
     const reportString = printSummary(summary, config)
     core.setOutput('report', reportString)
     
-    // Output test results as JSON string
-    try {
-      core.setOutput('testRuns', JSON.stringify(results))
-    } catch (jsonError) {
-      core.warning('Could not stringify test results for output')
-    }
-
     if (exitReason !== 'passed') {
       core.setFailed(`Datadog Synthetics tests failed: ${printSummary(summary, config)}`)
     } else {
@@ -71,7 +64,6 @@ const run = async (): Promise<void> => {
     core.setOutput('notFound', 0)
     core.setOutput('timedOut', 0)
     core.setOutput('report', 'Error executing tests')
-    core.setOutput('testRuns', '[]')
 
     if (exitReason !== 'passed') {
       core.setFailed('Running Datadog Synthetics tests failed.')
